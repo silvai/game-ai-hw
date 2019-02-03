@@ -232,19 +232,28 @@ def myCreatePathNetwork(world, agent=None):
         for point2 in points:
             for point3 in points:
                 if point1 != point2 and point2 != point3 and point1 != point3:
-                    if not obstructed(point1, point2, world) and not obstructed(point2, point3, world) and not obstructed(point1, point3, world):
-                        lines.append([(point1,point2,point3)])
-                        #lines.append(((point1[0], point1[1]), (point2[0], point2[1])))
+                    #if not obstructed(point1, point2, world) and not obstructed(point2, point3, world) and not obstructed(point1, point3, world):
+                        #lines.append([(point1,point2,point3)])
+                        lines.append(((point1[0], point1[1]), (point2[0], point2[1])))
 
-    print lines[55]
+    for l in range(len(lines)):
+        x = lines[l][0]
+        y = lines[l][1]
+        # if rayTraceWorldNoEndPoints(x, y, world.getLines()):
+        #     lines[l] = ((0,0), (0,0), (0,0))
+        # for o in obstacles:
+        #     if pointInsidePolygonLines(x, o.getLines()) and pointInsidePolygonLines(y, o.getLines()):
+        #         lines[l] = ((0, 0), (0, 0), (0, 0))
+        
 
+    print lines
     triangles = []
-
     for l in lines:
         print l
         if l not in triangles:
             triangles.append(l)
 
+    polys = triangles
 
     # for t in range(len(lines)):
     #     for coords in range(len(lines[t])):
