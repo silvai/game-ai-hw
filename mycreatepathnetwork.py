@@ -270,6 +270,7 @@ def myCreatePathNetwork(world, agent=None):
 
     ### YOUR CODE GOES BELOW HERE ###
     polyLines = []
+    worldLines = world.getLines()
     points = world.getPoints()
     obstacles = world.getObstacles()
 
@@ -311,18 +312,7 @@ def myCreatePathNetwork(world, agent=None):
 
 
     # # # ######## Create edges using polygon midpoints ########
-    #
-    # midpoints = []
-    # for t in range(0, len(polys) - 1, 2):
-    #     if polys[t] != polys[t+1]:
-    #         commonEdge = polygonsAdjacent(polys[t], polys[t+1])
-    #         if commonEdge:
-    #             for e in commonEdge:
-    #                 for e2 in commonEdge:
-    #                     if e != e2:
-    #                         midpoint = getMidpoint(e, e2)
-    #                         if midpoint not in midpoints:
-    #                             edges.append(midpoint)
+
 
     ####### Make sure that the edges are agent radius away from each obstacle ########
     #
@@ -331,16 +321,23 @@ def myCreatePathNetwork(world, agent=None):
             for obstacle in obstacles:
                 for oPoint in obstacle.getPoints():
                     if minimumDistance((mp, mp2), oPoint) > agent.getMaxRadius():
-                        if not obstructedByPolys(edges, world):
                             edges.append((mp, mp2))
+
+    for e in range(len(edges)):
+        x = edges[e][0]
+        y = edges[e][1]
+        if rayTraceWorldNoEndPoints(x, y, worldLines):
+            edges[e] = ((0, 0), (0, 0))
+        # for obstacle in obstacles:
+        #     for o in obstacle:
+        #         if minimumDistance(edges[e], o.getPoints()):
+        #             print "to smals"
 
 
     ### YOUR CODE GOES ABOVE HERE ###
     return nodes, edges, polys
 
-def obstructedByPolys(polys, world):
-    obstacles = world.getObstacles()
-
+def obstructedByPolys(obstacles, polys):
     for obstacle in obstacles:
         # check combined poly's avg vertices / midvertices
         points1 = obstacle.getPoints()
@@ -393,8 +390,9 @@ def obstructedRayTrace(p1, p2, p3, world, obstacles, polys):
                     if (p3, p1) not in worldLines:
                         return True
 
-            # Check pre-made obstacles inside our triangle
-            obstacles = world.getObstacles()
+            # obstructedByPolys(obstacles, (p1, p2, p3))
+            # # Check pre-made obstacles inside our triangle
+            # obstacles = world.getObstacles()
 
             for obstacle in obstacles:
                 # check combined poly's avg vertices / midvertices
